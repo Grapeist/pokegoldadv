@@ -14,7 +14,6 @@ Reset::
 	jr Init
 
 _Start::
-_Start::
     cp BOOTUP_A_CGB
     jr z, .cgb
     xor a ; FALSE
