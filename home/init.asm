@@ -14,16 +14,30 @@ Reset::
 	jr Init
 
 _Start::
-	cp BOOTUP_A_CGB
-	jr z, .cgb
-	xor a ; FALSE
-	jr .load
+_Start::
+    cp BOOTUP_A_CGB
+    jr z, .cgb
+    xor a ; FALSE
+    jr .load
 
 .cgb
-	ld a, TRUE
+    ld a, TRUE
 
+    ; --- NEW: Detect GBA ---
+    ; B register bit 0 is set if running on GBA
+    ld d, a            ; save current A (TRUE)
+    ld a, b
+    and 1
+    jr z, .not_gba
+
+    ; On GBA
+    ld a, TRUE
+    ld [wIsGBA], a     ; set GBA flag
+
+.not_gba
+    ld a, d            ; restore original TRUE for CGB/GBA
 .load
-	ldh [hCGB], a
+    ldh [hCGB], a      ; set normal hCGB flag
 
 Init::
 	di
